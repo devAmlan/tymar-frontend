@@ -13,16 +13,11 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Plus } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { format } from "date-fns";
 import MultiSelect from "@/components/dashboard/multiSelect";
+import useShiftStore from "@/app/store/shiftStore";
+import ShiftModal from "@/components/dashboard/shiftModal";
 interface Shift {
   id: string;
   title: string;
@@ -43,8 +38,6 @@ interface Option {
   name: string;
   email: string;
 }
-
-const employees = ["Sarah Johnson", "Mike Smith", "David Lee"];
 
 const MEMBERS = [
   {
@@ -74,25 +67,22 @@ const MEMBERS = [
   },
 ];
 
+const initialShiftState = {
+  title: "",
+  employee: [],
+  startTime: "",
+  endTime: "",
+  id: "",
+  date: new Date(),
+};
 export default function DashboardPage() {
   const [date, setDate] = useState<Date>(new Date());
-  const [shifts, setShifts] = useState<Shift[]>([
-    {
-      id: "1",
-      title: "Morning Shift",
-      employee: [],
-      date: new Date(),
-      startTime: "09:00",
-      endTime: "17:00",
-    },
-  ]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newShift, setNewShift] = useState({
-    title: "",
-    employee: [],
-    startTime: "",
-    endTime: "",
-  });
+  const [isShiftDialogOpen, setIsShiftDialogOpen] = useState(false);
+  const [newShift, setNewShift] = useState<Shift>(initialShiftState);
+  const [selectedShift, setSelectedShift] = useState<Shift>(initialShiftState);
+
+  const { addShift, deleteShift, shifts } = useShiftStore();
 
   const handleCreateShift = () => {
     const shift: Shift = {
@@ -104,9 +94,16 @@ export default function DashboardPage() {
       endTime: newShift.endTime,
     };
 
-    setShifts([...shifts, shift]);
+    addShift(shift);
     setIsDialogOpen(false);
-    setNewShift({ title: "", employee: [], startTime: "", endTime: "" });
+    setNewShift({
+      title: "",
+      employee: [],
+      startTime: "",
+      endTime: "",
+      id: "",
+      date: new Date(),
+    });
   };
 
   const shiftsForSelectedDate = shifts.filter(
@@ -178,23 +175,6 @@ export default function DashboardPage() {
                   toggleOptions={toggleOptions}
                   removeOption={removeOption}
                 />
-                {/* <Select
-                  value={newShift.employee}
-                  onValueChange={(value) =>
-                    setNewShift({ ...newShift, employee: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select employee" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {employees.map((employee) => (
-                      <SelectItem key={employee} value={employee}>
-                        {employee}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select> */}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -252,18 +232,28 @@ export default function DashboardPage() {
                 {shiftsForSelectedDate.map((shift) => (
                   <div
                     key={shift.id}
-                    className="flex items-center justify-between rounded-lg border p-4"
+                    className="flex flex-col gap-5 rounded-lg border p-4"
+                    onClick={() => {
+                      setSelectedShift(shift);
+                      setIsShiftDialogOpen(true);
+                    }}
                   >
-                    <div>
+                    <div className="flex items-center justify-between">
                       <h3 className="font-medium">{shift.title}</h3>
+                      <Trash
+                        className="size-4 cursor-pointer"
+                        onClick={() => deleteShift(shift?.id)}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
                       <div className="flex justify-start items-center gap-2">
                         {shift?.employee?.map((item: Employee) => (
                           <p key={item?._id}>{item?.name}</p>
                         ))}
                       </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {shift.startTime} - {shift.endTime}
+                      <div className="text-sm text-muted-foreground">
+                        {shift.startTime} - {shift.endTime}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -272,6 +262,23 @@ export default function DashboardPage() {
           </div>
         </Card>
       </div>
+      <ShiftModal
+        open={isShiftDialogOpen}
+        onOpenChange={() => {
+          setIsShiftDialogOpen((prev) => !prev);
+          if (!isShiftDialogOpen) {
+            setNewShift({
+              title: "",
+              employee: [],
+              startTime: "",
+              endTime: "",
+              id: "",
+              date: new Date(),
+            });
+          }
+        }}
+        shift={selectedShift}
+      />
     </div>
   );
 }
