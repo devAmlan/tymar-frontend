@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+import MultiSelect from "@/components/dashboard/multiSelect";
+
+import useShiftStore from "@/app/store/shiftStore";
 
 interface Employee {
   _id: string;
@@ -33,16 +37,116 @@ interface ShiftModalProps {
   shift: Shift;
 }
 
+interface Option {
+  _id: string;
+  name: string;
+  email: string;
+}
+
+const MEMBERS = [
+  {
+    _id: "0340304ksllfnsdds0",
+    name: "Amlan sahoo",
+    email: "amlan@gmail.com",
+  },
+  {
+    _id: "0340304ksllfnsdds1",
+    name: "Rahul pradhan",
+    email: "rahul@gmail.com",
+  },
+  {
+    _id: "0340304ksllfnsdds2",
+    name: "Ankit jha",
+    email: "amlan@gmail.com",
+  },
+  {
+    _id: "0340304ksllfnsdds3",
+    name: "Bruce wane",
+    email: "amlan@gmail.com",
+  },
+  {
+    _id: "0340304ksllfnsdds4",
+    name: "Spider man",
+    email: "amlan@gmail.com",
+  },
+];
+
+const initialShiftState = {
+  title: "",
+  employee: [],
+  startTime: "",
+  endTime: "",
+  id: "",
+  date: new Date(),
+};
+
 const createUpdateModal: React.FC<ShiftModalProps> = (props) => {
   const { open, onOpenChange, shift } = props;
+
+  const [date, setDate] = useState<Date>(new Date());
+  const [newShift, setNewShift] = useState<Shift>(initialShiftState);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
+  const { addShift, deleteShift, shifts } = useShiftStore();
+
+  const handleCreateShift = () => {
+    const shift: Shift = {
+      id: Math.random().toString(36).substr(2, 9),
+      title: newShift.title,
+      employee: newShift.employee,
+      date: date,
+      startTime: newShift.startTime,
+      endTime: newShift.endTime,
+    };
+
+    addShift(shift);
+    setIsDialogOpen(false);
+    setNewShift({
+      title: "",
+      employee: [],
+      startTime: "",
+      endTime: "",
+      id: "",
+      date: new Date(),
+    });
+  };
 
   const onChangeInputField = (e: any) => {
     const { name, value } = e.target;
 
-    setNewShift((prev:Shift)=>({
-        ...prev
-        [name]:value
-    }))
+    setNewShift((prev: Shift) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const toggleOptions = (option: Option) => {
+    const newSelectedValue = newShift?.employee?.some(
+      (member: Employee) => member._id === option._id
+    )
+      ? newShift?.employee?.filter(
+          (value: Employee) => value?._id !== option._id
+        )
+      : [...newShift?.employee, option];
+
+    // add newSelectedValue in the array
+
+    setNewShift((prev: any) => ({
+      ...prev,
+      employee: newSelectedValue,
+    }));
+  };
+
+  const removeOption = (option: Employee) => {
+    setNewShift((prev: any) => {
+      if (!prev) return prev; // Early return if prev is null
+      return {
+        ...prev,
+        employee: prev.employee.filter(
+          (value: any) => value._id !== option._id
+        ),
+      };
+    });
   };
 
   return (
