@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { Lexend } from "next/font/google";
+import { Inter } from 'next/font/google';
 import "./globals.css";
-import { RegisterProvider } from "./context/RegisterContext";
 
-const lexend = Lexend({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,9 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <RegisterProvider>
-        <body className={lexend.className}>{children}</body>
-      </RegisterProvider>
+   <body className={inter.className}>
+        {children}
+      </body>
     </html>
   );
 }

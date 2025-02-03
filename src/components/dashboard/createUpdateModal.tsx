@@ -1,23 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
+  DialogTrigger,
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-
+import { Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import MultiSelect from "@/components/dashboard/multiSelect";
 
-import { nanoid } from "nanoid";
-
-import { useShiftContext } from "@/app/context/ShiftContext";
-
-import _ from "lodash";
+import useShiftStore from "@/app/store/shiftStore";
 
 interface Employee {
   _id: string;
@@ -38,8 +35,6 @@ interface ShiftModalProps {
   open: boolean;
   onOpenChange: () => void;
   shift: Shift;
-  handleSubmit: (shift: Shift) => void;
-  isUpdateModal: boolean;
 }
 
 interface Option {
@@ -76,38 +71,36 @@ const MEMBERS = [
   },
 ];
 
-const CreateUpdateModal: React.FC<ShiftModalProps> = (props) => {
-  const {
-    open,
-    onOpenChange,
-    shift,
-    handleSubmit,
-    isUpdateModal = false,
-  } = props;
+const initialShiftState = {
+  title: "",
+  employee: [],
+  startTime: "",
+  endTime: "",
+  id: "",
+  date: new Date(),
+};
 
-  const [newShift, setNewShift] = useState<Shift>({
-    title: "",
-    employee: [],
-    startTime: "",
-    endTime: "",
-    id: "",
-    date: new Date(),
-  });
+const createUpdateModal: React.FC<ShiftModalProps> = (props) => {
+  const { open, onOpenChange, shift } = props;
 
-  const { shiftDate } = useShiftContext();
+  const [date, setDate] = useState<Date>(new Date());
+  const [newShift, setNewShift] = useState<Shift>(initialShiftState);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
+  const { addShift, deleteShift, shifts } = useShiftStore();
 
   const handleCreateShift = () => {
     const shift: Shift = {
-      id: isUpdateModal ? newShift.id : nanoid(),
+      id: Math.random().toString(36).substr(2, 9),
       title: newShift.title,
       employee: newShift.employee,
-      date: shiftDate,
+      date: date,
       startTime: newShift.startTime,
       endTime: newShift.endTime,
     };
 
-    handleSubmit(shift);
-
+    addShift(shift);
+    setIsDialogOpen(false);
     setNewShift({
       title: "",
       employee: [],
@@ -136,6 +129,8 @@ const CreateUpdateModal: React.FC<ShiftModalProps> = (props) => {
         )
       : [...newShift?.employee, option];
 
+    // add newSelectedValue in the array
+
     setNewShift((prev: any) => ({
       ...prev,
       employee: newSelectedValue,
@@ -144,7 +139,7 @@ const CreateUpdateModal: React.FC<ShiftModalProps> = (props) => {
 
   const removeOption = (option: Employee) => {
     setNewShift((prev: any) => {
-      if (!prev) return prev;
+      if (!prev) return prev; // Early return if prev is null
       return {
         ...prev,
         employee: prev.employee.filter(
@@ -154,38 +149,33 @@ const CreateUpdateModal: React.FC<ShiftModalProps> = (props) => {
     });
   };
 
-  useEffect(() => {
-    setNewShift(shift);
-  }, [open]);
-
-  const { title, employee, startTime, endTime } = newShift;
-
-  const isActionBtnDisabled = _.some(
-    [title, employee, startTime, endTime],
-    (value) => _.isEmpty(value)
-  );
-
   return (
     <Dialog defaultOpen={false} open={open} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Create Shift
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            {isUpdateModal ? "Update" : "Create New"} Shift
-          </DialogTitle>
+          <DialogTitle>Create New Shift</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label htmlFor="title">Shift Title</Label>
             <Input
               id="title"
-              name={"title"}
               value={newShift.title}
-              onChange={onChangeInputField}
+              onChange={(e) =>
+                setNewShift({ ...newShift, title: e.target.value })
+              }
               placeholder="Enter Shift Title"
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="employee">Employee</Label>
+
             <MultiSelect
               options={MEMBERS}
               selectedOptions={newShift.employee}
@@ -198,35 +188,32 @@ const CreateUpdateModal: React.FC<ShiftModalProps> = (props) => {
               <Label htmlFor="startTime">Start Time</Label>
               <Input
                 id="startTime"
-                name={"startTime"}
                 type="time"
                 value={newShift.startTime}
-                onChange={onChangeInputField}
+                onChange={(e) =>
+                  setNewShift({ ...newShift, startTime: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="endTime">End Time</Label>
               <Input
                 id="endTime"
-                name={"endTime"}
                 type="time"
                 value={newShift.endTime}
-                onChange={onChangeInputField}
+                onChange={(e) =>
+                  setNewShift({ ...newShift, endTime: e.target.value })
+                }
               />
             </div>
           </div>
+          <Button className="w-full" onClick={handleCreateShift}>
+            Create Shift
+          </Button>
         </div>
-        <DialogFooter>
-          <Button variant={"secondary"} onClick={onOpenChange}>
-            Cancel
-          </Button>
-          <Button onClick={handleCreateShift} disabled={isActionBtnDisabled}>
-            {isUpdateModal ? "Update" : "Create"} Shift
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default CreateUpdateModal;
+export default createUpdateModal;
