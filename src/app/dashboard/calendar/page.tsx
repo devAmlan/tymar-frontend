@@ -14,10 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash } from "lucide-react";
-import { format } from "date-fns";
+import { format, startOfDay, isBefore } from "date-fns";
 import MultiSelect from "@/components/dashboard/multiSelect";
 import useShiftStore from "@/app/store/shiftStore";
 import ShiftModal from "@/components/dashboard/shiftModal";
+import CreateShift from "./CreateShift";
+import { useShiftContext } from "@/app/context/ShiftContext";
+import UpdateShift from "./UpdateShift";
+import DeleteModal from "@/components/dashboard/deleteModal";
 interface Shift {
   id: string;
   title: string;
@@ -76,38 +80,41 @@ const initialShiftState = {
   date: new Date(),
 };
 export default function DashboardPage() {
-  const [date, setDate] = useState<Date>(new Date());
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isShiftDialogOpen, setIsShiftDialogOpen] = useState(false);
+  const [isShiftDialogOpen, setIsShiftDialogOpen] = useState<boolean>(false);
+  const [isUpdateShiftOpen, setIsUpdateShiftOpen] = useState<boolean>(false);
+  const [isDeleteShiftOpen, setIsDeleteShiftOpen] = useState<boolean>(false);
   const [newShift, setNewShift] = useState<Shift>(initialShiftState);
   const [selectedShift, setSelectedShift] = useState<Shift>(initialShiftState);
+  const [selectedShiftId, setSelectedShiftId] = useState<string>("");
 
   const { addShift, deleteShift, shifts } = useShiftStore();
+  const { shiftDate, setShiftDate } = useShiftContext();
 
-  const handleCreateShift = () => {
-    const shift: Shift = {
-      id: Math.random().toString(36).substr(2, 9),
-      title: newShift.title,
-      employee: newShift.employee,
-      date: date,
-      startTime: newShift.startTime,
-      endTime: newShift.endTime,
-    };
+  // const handleCreateShift = () => {
+  //   const shift: Shift = {
+  //     id: Math.random().toString(36).substr(2, 9),
+  //     title: newShift.title,
+  //     employee: newShift.employee,
+  //     date: date,
+  //     startTime: newShift.startTime,
+  //     endTime: newShift.endTime,
+  //   };
 
-    addShift(shift);
-    setIsDialogOpen(false);
-    setNewShift({
-      title: "",
-      employee: [],
-      startTime: "",
-      endTime: "",
-      id: "",
-      date: new Date(),
-    });
-  };
+  //   addShift(shift);
+  //   setIsDialogOpen(false);
+  //   setNewShift({
+  //     title: "",
+  //     employee: [],
+  //     startTime: "",
+  //     endTime: "",
+  //     id: "",
+  //     date: new Date(),
+  //   });
+  // };
 
   const shiftsForSelectedDate = shifts.filter(
-    (shift) => format(shift.date, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+    (shift) =>
+      format(shift.date, "yyyy-MM-dd") === format(shiftDate, "yyyy-MM-dd")
   );
 
   const toggleOptions = (option: Option) => {
@@ -139,81 +146,37 @@ export default function DashboardPage() {
     });
   };
 
+  const onToggleUpdateModal = () => {
+    setIsUpdateShiftOpen((prev) => !prev);
+    setIsShiftDialogOpen(false);
+  };
+
+  const onToggleDeleteModal = () => setIsDeleteShiftOpen((prev) => !prev);
+
+  const onDeleteShift = () => {
+    deleteShift(selectedShiftId);
+    onToggleDeleteModal();
+  };
+
+  const isPastDate = shiftDate
+    ? isBefore(shiftDate, startOfDay(new Date()))
+    : false;
+
+  console.log(isPastDate);
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Schedule</h1>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create Shift
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Create New Shift</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Shift Title</Label>
-                <Input
-                  id="title"
-                  value={newShift.title}
-                  onChange={(e) =>
-                    setNewShift({ ...newShift, title: e.target.value })
-                  }
-                  placeholder="Enter Shift Title"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="employee">Employee</Label>
-
-                <MultiSelect
-                  options={MEMBERS}
-                  selectedOptions={newShift.employee}
-                  toggleOptions={toggleOptions}
-                  removeOption={removeOption}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="startTime">Start Time</Label>
-                  <Input
-                    id="startTime"
-                    type="time"
-                    value={newShift.startTime}
-                    onChange={(e) =>
-                      setNewShift({ ...newShift, startTime: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="endTime">End Time</Label>
-                  <Input
-                    id="endTime"
-                    type="time"
-                    value={newShift.endTime}
-                    onChange={(e) =>
-                      setNewShift({ ...newShift, endTime: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <Button className="w-full" onClick={handleCreateShift}>
-                Create Shift
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <CreateShift isBtnDisabled={isPastDate} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
         <Card className="p-4">
           <Calendar
             mode="single"
-            selected={date}
-            onSelect={(date) => date && setDate(date)}
+            selected={shiftDate}
+            onSelect={(date) => date && setShiftDate(date)}
             className="rounded-md border"
           />
         </Card>
@@ -221,7 +184,7 @@ export default function DashboardPage() {
         <Card className="p-4">
           <div className="space-y-2">
             <h2 className="font-semibold">
-              Shifts for {format(date, "MMMM d, yyyy")}
+              Shifts for {format(shiftDate, "MMMM d, yyyy")}
             </h2>
             {shiftsForSelectedDate.length === 0 ? (
               <p className="text-sm text-muted-foreground">
@@ -242,7 +205,12 @@ export default function DashboardPage() {
                       <h3 className="font-medium">{shift.title}</h3>
                       <Trash
                         className="size-4 cursor-pointer"
-                        onClick={() => deleteShift(shift?.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // onDeleteShift(shift.id);
+                          setSelectedShiftId(shift?.id);
+                          onToggleDeleteModal();
+                        }}
                       />
                     </div>
                     <div className="flex items-center justify-between">
@@ -278,6 +246,19 @@ export default function DashboardPage() {
           }
         }}
         shift={selectedShift}
+        onUpdateShift={onToggleUpdateModal}
+        isBtnDisabled={isPastDate}
+      />
+      <UpdateShift
+        shift={selectedShift}
+        open={isUpdateShiftOpen}
+        onOpenChange={onToggleUpdateModal}
+      />
+      <DeleteModal
+        open={isDeleteShiftOpen}
+        onOpenChange={onToggleDeleteModal}
+        primaryBtnOnclick={onDeleteShift}
+        isBtnDisabled={isPastDate}
       />
     </div>
   );
