@@ -8,6 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import UpdateShift from "@/app/dashboard/calendar/UpdateShift";
 
 interface Employee {
   _id: string;
@@ -28,10 +29,12 @@ interface ShiftModalProps {
   open: boolean;
   onOpenChange: () => void;
   shift: Shift;
+  onUpdateShift: () => void;
+  isBtnDisabled: boolean;
 }
 
 const ShiftModal: React.FC<ShiftModalProps> = (props) => {
-  const { open, onOpenChange, shift } = props;
+  const { open, onOpenChange, shift, onUpdateShift, isBtnDisabled } = props;
 
   return (
     <Dialog defaultOpen={false} open={open} onOpenChange={onOpenChange}>
@@ -53,7 +56,16 @@ const ShiftModal: React.FC<ShiftModalProps> = (props) => {
           <Button variant={"secondary"} onClick={onOpenChange}>
             Cancel
           </Button>
-          <Button type="submit">Update</Button>
+          <Button
+            onClick={() => {
+              if (!isBtnDisabled) {
+                onUpdateShift();
+              }
+            }}
+            disabled={isBtnDisabled}
+          >
+            Update Shift
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

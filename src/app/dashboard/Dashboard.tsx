@@ -73,22 +73,6 @@ export default function Dashboard() {
                   <p className="text-sm text-muted-foreground">2 hours ago</p>
                 </div>
               </div>
-              <div className="flex items-center">
-                <div className="ml-4 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    Mike Smith ended his shift
-                  </p>
-                  <p className="text-sm text-muted-foreground">3 hours ago</p>
-                </div>
-              </div>
-              <div className="flex items-center">
-                <div className="ml-4 space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    New shift assigned to David Lee
-                  </p>
-                  <p className="text-sm text-muted-foreground">5 hours ago</p>
-                </div>
-              </div>
             </div>
           </CardContent>
         </Card>
