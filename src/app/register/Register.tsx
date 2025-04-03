@@ -31,12 +31,12 @@ function RoleSelection() {
           onClick={() => handleRoleSelect("employee")}
           className={`group p-8 border-2 rounded-xl flex flex-col items-center space-y-4 transition-all duration-300 ${
             state.role === "employee"
-              ? "border-blue-500 bg-gradient-to-b from-blue-50 to-white shadow"
-              : "border-gray-200 hover:border-blue-200 hover:bg-gradient-to-b hover:from-gray-50 hover:to-white hover:shadow-md"
+              ? "border-text-primary bg-gradient-to-b from-blue-50 to-white shadow"
+              : "border-gray-200 hover:border-text-primary hover:bg-gradient-to-b hover:from-gray-50 hover:to-white hover:shadow-md"
           }`}
         >
-          <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-            <User className="w-8 h-8 text-blue-600" />
+          <div className="w-16 h-16 rounded-full bg-text-primary/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+            <User className="w-8 h-8 text-text-primary" />
           </div>
           <div className="text-center">
             <span className="block text-lg font-semibold text-gray-900">
@@ -51,12 +51,12 @@ function RoleSelection() {
           onClick={() => handleRoleSelect("employer")}
           className={`group p-8 border-2 rounded-xl flex flex-col items-center space-y-4 transition-all duration-300 ${
             state.role === "employer"
-              ? "border-blue-500 bg-gradient-to-b from-blue-50 to-white shadow"
-              : "border-gray-200 hover:border-blue-200 hover:bg-gradient-to-b hover:from-gray-50 hover:to-white hover:shadow-md"
+              ? "border-text-primary bg-gradient-to-b from-blue-50 to-white shadow"
+              : "border-gray-200 hover:border-text-primary hover:bg-gradient-to-b hover:from-gray-50 hover:to-white hover:shadow-md"
           }`}
         >
-          <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-            <Building2 className="w-8 h-8 text-blue-600" />
+          <div className="w-16 h-16 rounded-full bg-text-primary/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+            <Building2 className="w-8 h-8 text-text-primary" />
           </div>
           <div className="text-center">
             <span className="block text-lg font-semibold text-gray-900">
@@ -136,7 +136,7 @@ function EmployeeDetails() {
         </button>
         <button
           type="submit"
-          className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg transition-all hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow"
+          className="flex items-center px-6 py-3 bg-gradient-to-r from-[#0eb770] to-green-500 text-white rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow"
         >
           Next
           <ArrowRight className="w-4 h-4 ml-2" />
@@ -208,7 +208,7 @@ function EmployerDetails() {
         </button>
         <button
           type="submit"
-          className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg transition-all hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md hover:shadow"
+          className="flex items-center px-6 py-3 bg-gradient-to-r from-[#0eb770] to-green-500 text-white rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-text-primary focus:ring-offset-2 shadow-md hover:shadow"
         >
           Next
           <ArrowRight className="w-4 h-4 ml-2" />
@@ -284,7 +284,7 @@ export default function Register() {
                 key={step}
                 className={`w-3 h-3 rounded-full transition-all duration-300 ${
                   state.currentStep >= step
-                    ? "bg-gradient-to-r from-blue-500 to-blue-600 shadow"
+                    ? "bg-text-primary shadow"
                     : "bg-gray-200"
                 }`}
               />

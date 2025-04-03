@@ -1,8 +1,8 @@
 import React from 'react'
-
+import Settings from './Settings'
 function page() {
   return (
-    <div>settings</div>
+    <Settings />
   )
 }
 

@@ -4,7 +4,9 @@ import { CalendarDays, Users, Clock } from "lucide-react";
 export default function Dashboard() {
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-text-primary">
+        Dashboard
+      </h1>
 
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
         <Card>
@@ -48,7 +50,9 @@ export default function Dashboard() {
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-7">
         <Card className="md:col-span-4 col-span-1">
           <CardHeader>
-            <CardTitle>Weekly Schedule Overview</CardTitle>
+            <CardTitle className="text-text-primary">
+              Weekly Schedule Overview
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="h-[200px] flex items-center justify-center border-2 border-dashed rounded-lg">
@@ -66,7 +70,7 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center">
-                <div className="ml-4 space-y-1">
+                <div className="space-y-1">
                   <p className="text-sm font-medium leading-none">
                     Sarah Johnson started her shift
                   </p>

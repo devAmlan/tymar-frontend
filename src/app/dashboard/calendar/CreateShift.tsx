@@ -1,5 +1,4 @@
-import CreateUpdateModal from "@/components/dashboard/CreateUpdateModal";
-import { nanoid } from "nanoid";
+import CreateUpdateModal from "@/components/dashboard/createUpdateModal";
 import { useState } from "react";
 import useShiftStore from "@/app/store/shiftStore";
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,10 @@ type Shift = {
   date: Date;
   startTime: string;
   endTime: string;
+  breakStartTime: string;
+  breakEndTime: string;
 };
+
 
 const initialShiftState = {
   title: "",
@@ -27,7 +29,10 @@ const initialShiftState = {
   endTime: "",
   id: "",
   date: new Date(),
+  breakStartTime: "",
+  breakEndTime: "",
 };
+
 
 const CreateShift = (props: any) => {
   const { isBtnDisabled } = props;
@@ -49,7 +54,7 @@ const CreateShift = (props: any) => {
 
   return (
     <>
-      <Button onClick={onToggleModal} disabled={isBtnDisabled}>
+      <Button onClick={onToggleModal} disabled={isBtnDisabled} className="bg-text-primary hover:bg-text-primary/90 text-white">
         <Plus className="mr-2 h-4 w-4" />
         Create Shift
       </Button>

@@ -8,6 +8,8 @@ interface Employee {
 }
 
 type Shift = {
+  breakEndTime: string;
+  breakStartTime: string;
   id: string;
   title: string;
   employee: Employee[]; // Array of employee IDs or names

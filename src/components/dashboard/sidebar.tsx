@@ -13,9 +13,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Time & Attendance", href: "/dashboard", icon: LayoutDashboard },
   { name: "Calendar", href: "/dashboard/calendar", icon: Calendar },
-  { name: "Employees", href: "/dashboard/employees", icon: Users },
+  { name: "People", href: "/dashboard/employees", icon: Users },
   { name: "Organization", href: "/dashboard/organization", icon: Building2 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
@@ -24,7 +24,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="md:flex hidden h-full w-64 flex-col border-r bg-card">
+    <div className="md:flex hidden h-full w-64 flex-col border-r bg-background">
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/" className="flex items-center">
           <Calendar className="h-6 w-6 text-primary" />

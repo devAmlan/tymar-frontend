@@ -1,4 +1,4 @@
-import CreateUpdateModal from "@/components/dashboard/CreateUpdateModal";
+import CreateUpdateModal from "@/components/dashboard/createUpdateModal";
 import { useState } from "react";
 import useShiftStore from "@/app/store/shiftStore";
 import { Button } from "@/components/ui/button";

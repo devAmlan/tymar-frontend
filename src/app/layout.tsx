@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Lexend } from "next/font/google";
+import { Lexend,Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { RegisterProvider } from "./context/RegisterContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const lexend = Lexend({ subsets: ["latin"] });
+const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,9 +19,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <RegisterProvider>
-        <body className={lexend.className}>{children}</body>
-      </RegisterProvider>
+      <GoogleOAuthProvider
+        clientId={
+          "390835727076-0dkmmmvbj5vlh44q78ecke58rm1pb5vj.apps.googleusercontent.com"
+        }
+      >
+        <RegisterProvider>
+          <body className={lexend.className}>{children}</body>
+        </RegisterProvider>
+      </GoogleOAuthProvider>
     </html>
   );
 }
